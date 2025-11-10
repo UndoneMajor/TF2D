@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bvljhvya6yxxl"]
+
+[ext_resource type="Script" uid="uid://c4b4qp8bwpvld" path="res://minigun_sprite.gd" id="1_e33v4"]
+
+[node name="MinigunSprite" type="Sprite2D"]
+script = ExtResource("1_e33v4")

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dv642ueuuhcdi"]
+
+[ext_resource type="Script" uid="uid://dyq3x75wdenb2" path="res://rocket_launcher_sprite.gd" id="1_f5kh1"]
+
+[node name="RocketLauncherSprite" type="Sprite2D"]
+script = ExtResource("1_f5kh1")

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cby1pvmurnd7n"]
+
+[ext_resource type="Script" uid="uid://b0ml12s6tos0k" path="res://sapper_sprite.gd" id="1_83npt"]
+
+[node name="sapper_sprite" type="Sprite2D"]
+script = ExtResource("1_83npt")

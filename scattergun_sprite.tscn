@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cq64lisry71lc"]
+
+[ext_resource type="Script" uid="uid://d2mq3nj0221qn" path="res://scattergun_sprite.gd" id="1_4lpvn"]
+
+[node name="ScattergunSprite" type="Sprite2D"]
+script = ExtResource("1_4lpvn")

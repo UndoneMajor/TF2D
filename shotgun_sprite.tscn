@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dn8j6tfvpc011"]
+
+[ext_resource type="Script" uid="uid://bfbpriwhn0rqk" path="res://shotgun_sprite.gd" id="1_7v58l"]
+
+[node name="ShotgunSprite" type="Sprite2D"]
+script = ExtResource("1_7v58l")

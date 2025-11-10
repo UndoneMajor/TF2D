@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ck80lkobv022a"]
+
+[ext_resource type="Script" uid="uid://bp4eryerbb4ev" path="res://shovel_script.gd" id="1_20tvp"]
+
+[node name="shovel_script" type="Sprite2D"]
+script = ExtResource("1_20tvp")

@@ -1,0 +1,27 @@
+[gd_scene load_steps=7 format=3 uid="uid://dvrr1140c7x5r"]
+
+[ext_resource type="Script" uid="uid://6m8oad14wwta" path="res://main.gd" id="1_main"]
+[ext_resource type="PackedScene" uid="uid://b0onu6k04t8gh" path="res://player.tscn" id="1_player"]
+[ext_resource type="PackedScene" uid="uid://d1o1sfulf16jc" path="res://hud.tscn" id="2_h2yge"]
+[ext_resource type="Script" uid="uid://lklnubge3a4b" path="res://enemy.gd" id="3_h2yge"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1bvp3"]
+radius = 32.0
+
+[sub_resource type="Theme" id="Theme_h2yge"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+
+[node name="Enemy" type="CharacterBody2D" parent="."]
+position = Vector2(530, 239)
+script = ExtResource("3_h2yge")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy"]
+shape = SubResource("CircleShape2D_1bvp3")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" parent="CanvasLayer" instance=ExtResource("2_h2yge")]

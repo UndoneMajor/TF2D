@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b7meq2k1dn81n"]
+
+[ext_resource type="Script" uid="uid://bajk7os56vhen" path="res://disguise_kit_sprite.gd" id="1_fo2ph"]
+
+[node name="disguise_kit_sprite" type="Sprite2D"]
+script = ExtResource("1_fo2ph")
