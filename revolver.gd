@@ -11,7 +11,7 @@ func _ready():
 	current_clip = 6
 	reserve_ammo = 24
 	is_automatic = false
-	bullet_speed = 700
+	bullet_speed = 2000
 	bullet_count = 1
 	spread = 0.02
 	recoil_amount = 2.5

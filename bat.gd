@@ -63,6 +63,12 @@ func shoot(from_position: Vector2, direction: Vector2):
 		for result in results:
 			var hit_body = result.collider
 			if hit_body != owner_player and hit_body.has_method("take_damage"):
+				# Check teammates (TF2 style - don't hit teammates)
+				if "team" in hit_body and "team" in owner_player:
+					if hit_body.team == owner_player.team:
+						print("Bat hit teammate - no damage")
+						continue
+				
 				hit_body.take_damage(damage)
 				print("Bat hit: ", hit_body.name, " for ", damage, " damage!")
 	else:

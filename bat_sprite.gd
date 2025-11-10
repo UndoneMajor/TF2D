@@ -6,25 +6,22 @@ func _ready():
 	image.fill(Color.SADDLE_BROWN)  # Brown bat
 	texture = ImageTexture.create_from_image(image)
 	
-	# Offset so it rotates from the handle
-	offset = Vector2(-20, -30)
+	# Offset so it rotates from the handle (pivot point)
+	offset = Vector2(-60, -5)
 	
-	# Start at idle position (to the right)
-	position = Vector2(-20,-30)  # Right side of player
-	rotation_degrees = 90  # Angled down
+	# Position in scout's hand (adjusted for sprite)
+	position = Vector2(35, 5)  # In front, slightly down
+	rotation_degrees = 90  # Horizontal
 
 func swing_animation():
 	# Swing animation
 	var tween = create_tween()
 	tween.set_parallel(true)
 	
-	# Swing up and forward
-	tween.tween_property(self, "rotation_degrees", 90, 0.15)
-	tween.tween_property(self, "position", Vector2(50, -10), 0.15)
+	# Swing up
+	tween.tween_property(self, "rotation_degrees", 95,0.5)
 	
 	# Return to idle position
 	await tween.finished
 	tween = create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(self, "rotation_degrees", 45, 0.15)
-	tween.tween_property(self, "position", Vector2(20, 15), 0.15)
+	tween.tween_property(self, "rotation_degrees", 0,0.5)

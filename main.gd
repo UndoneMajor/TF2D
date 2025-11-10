@@ -101,7 +101,7 @@ func _on_class_selected(class_type):
 	else:
 		player.global_position = Vector2(1080, 360)
 	
-	player.set_class(class_type)
+	# Set team FIRST before setting class (so sprite loads correctly)
 	player.team = player_team
 	
 	# Set color based on team
@@ -109,6 +109,15 @@ func _on_class_selected(class_type):
 		player.class_color = Color(0.8, 0.2, 0.2)
 	else:
 		player.class_color = Color(0.2, 0.4, 0.9)
+	
+	# Now set class
+	player.set_class(class_type)
+	
+	# Load sprite AFTER team is set
+	var sprite = player.get_node_or_null("AnimatedSprite2D")
+	if sprite and sprite.has_method("load_class_sprite"):
+		sprite.load_class_sprite(class_type, player_team)
+		print("Sprite loaded for team ", player_team, " class ", class_type)
 	
 	# Reset ALL effects
 	player.is_burning = false

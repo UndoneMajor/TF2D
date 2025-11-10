@@ -3,7 +3,7 @@ extends Node2D
 func _draw():
 	# Draw flamethrower body
 	# Main body (gray rectangle)
-	draw_rect(Rect2(Vector2(0, -8), Vector2(40, 16)), Color(0.3, 0.3, 0.3))
+	draw_rect(Rect2(Vector2(35, -8), Vector2(40, 16)), Color(0.3, 0.3, 0.3))
 	
 	# Barrel (darker gray)
 	draw_rect(Rect2(Vector2(35, -6), Vector2(20, 12)), Color(0.2, 0.2, 0.2))
@@ -25,4 +25,3 @@ func _draw():
 func shoot_animation():
 	# Flash the nozzle when shooting
 	queue_redraw()
-

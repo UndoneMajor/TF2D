@@ -131,6 +131,11 @@ func update_team_color():
 	else:  # BLUE
 		class_color = Color(0.2, 0.4, 0.9)  # BLUE
 	
+	# Load sprite for this bot
+	var sprite = get_node_or_null("AnimatedSprite2D")
+	if sprite and sprite.has_method("load_class_sprite"):
+		sprite.load_class_sprite(current_class, team)
+	
 	queue_redraw()
 	var team_name = "RED" if team == Team.RED else "BLUE"
 	print("Bot color updated: Team=", team_name, " Color=", class_color)
@@ -176,13 +181,9 @@ func create_weapons(class_type):
 	current_weapon = primary_weapon
 
 func _draw():
-	# Draw bot body
-	draw_circle(Vector2.ZERO, 32, class_color)
+	# Don't draw circle - using sprite instead
 	
-	# Draw direction indicator
-	draw_line(Vector2.ZERO, Vector2(40, 0), Color.WHITE, 3)
-	
-	# Bot antenna (yellow)
+	# Bot antenna (yellow) - keep this to identify bots
 	draw_line(Vector2(0, -32), Vector2(0, -45), Color.YELLOW, 2)
 	draw_circle(Vector2(0, -45), 5, Color.YELLOW)
 	
@@ -258,6 +259,20 @@ func _physics_process(delta):
 		knockback_velocity = Vector2.ZERO
 	
 	move_and_slide()
+	
+	# Update sprite animation based on movement
+	var sprite = get_node_or_null("AnimatedSprite2D")
+	if sprite:
+		if velocity.length() > 10:
+			if sprite.animation != "walk" and sprite.animation != "punch_left" and sprite.animation != "punch_right":
+				sprite.play("walk")
+		else:
+			sprite.stop()
+			# Idle frame based on class
+			if current_class == Class.SCOUT or current_class == Class.SOLDIER or current_class == Class.PYRO or current_class == Class.SPY:
+				sprite.frame = 4
+			elif current_class == Class.HEAVY:
+				sprite.frame = 0
 
 func make_decision():
 	# Find nearest ENEMY target (different team only!)

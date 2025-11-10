@@ -204,6 +204,11 @@ func set_class(class_type):
 	secondary_weapon.owner_player = self
 	melee_weapon.owner_player = self
 	
+	# Position weapons in front of player (in hand)
+	primary_weapon.position = Vector2(35, 0)
+	secondary_weapon.position = Vector2(35, 0)
+	melee_weapon.position = Vector2(35, 0)
+	
 	if utility_weapon:
 		add_child(utility_weapon)
 		utility_weapon.owner_player = self
@@ -214,13 +219,12 @@ func set_class(class_type):
 	secondary_weapon.visible = false
 	melee_weapon.visible = false
 	
+	# DON'T load sprite here - it will be loaded after team is set in main.gd
+	
 	queue_redraw()
 
 func _draw():
-	if is_invisible:
-		draw_circle(Vector2.ZERO, 32, Color(class_color.r, class_color.g, class_color.b, 0.3))
-	else:
-		draw_circle(Vector2.ZERO, 32, class_color)
+	# Don't draw circle anymore - using sprite instead
 	
 	# Draw fire if burning
 	if is_burning:
@@ -405,11 +409,30 @@ func _physics_process(delta):
 		velocity = direction * speed
 	
 	move_and_slide()
+	
+	# Update sprite animation based on movement
+	var sprite = get_node_or_null("AnimatedSprite2D")
+	if sprite:
+		if velocity.length() > 10:
+			if sprite.animation != "walk":
+				sprite.play("walk")  # Play walking animation
+		else:
+			sprite.stop()
+			if current_class == 0:  # Scout
+				sprite.frame = 4  # Show scout5 when idle
+			elif current_class == 1:  # Soldier
+				sprite.frame = 4  # Show soldier5 when idle
+			elif current_class == 2:  # Pyro
+				sprite.frame = 4  # Show pyro5 when idle
+			elif current_class == 3:  # Heavy
+				sprite.frame = 0  # Show heavy1 when idle
+			elif current_class == 4:  # Spy
+				sprite.frame = 4  # Show spy5 when idle
 
 func switch_weapon(new_weapon):
 	if current_weapon:
 		current_weapon.visible = false
-	
+	5
 	current_weapon = new_weapon
 	
 	if not is_invisible:
@@ -484,7 +507,9 @@ func shoot():
 		queue_redraw()
 	
 	if current_weapon:
-		var shoot_pos = global_position + Vector2.RIGHT.rotated(rotation) * 40
+		# Adjust weapon position to be in front (in scout's hand)
+		var weapon_offset = 50  # Further forward to match hand position
+		var shoot_pos = global_position + Vector2.RIGHT.rotated(rotation) * weapon_offset
 		var shoot_dir = Vector2.RIGHT.rotated(rotation)
 		current_weapon.shoot(shoot_pos, shoot_dir)
 

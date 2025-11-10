@@ -5,8 +5,8 @@ func _ready():
 	image.fill(Color.DARK_GRAY)
 	texture = ImageTexture.create_from_image(image)
 	
-	offset = Vector2(-15, -5)
-	position = Vector2(30, 0)
+	offset = Vector2(-30, -5)
+	position = Vector2(20, 0)
 	rotation_degrees = 0
 
 func shoot_animation():

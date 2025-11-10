@@ -37,9 +37,10 @@ func shoot(from_position: Vector2, direction: Vector2):
 	can_attack = false
 	swing_direction = direction
 	
-	# Play punch animation
-	if sprite and sprite.has_method("swing_animation"):
-		sprite.swing_animation()
+	# Play punch animation on player sprite (heavy only)
+	var player_sprite = owner_player.get_node_or_null("AnimatedSprite2D")
+	if player_sprite and player_sprite.has_method("play_punch_animation"):
+		player_sprite.play_punch_animation()
 	
 	show_range = true
 	queue_redraw()
@@ -62,6 +63,12 @@ func shoot(from_position: Vector2, direction: Vector2):
 		for result in results:
 			var hit_body = result.collider
 			if hit_body != owner_player and hit_body.has_method("take_damage"):
+				# Check teammates
+				if "team" in hit_body and "team" in owner_player:
+					if hit_body.team == owner_player.team:
+						print("Fists hit teammate - no damage")
+						continue
+				
 				hit_body.take_damage(damage)
 				print("Fists hit: ", hit_body.name, " for ", damage, " damage!")
 	else:

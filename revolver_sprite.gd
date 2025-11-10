@@ -6,7 +6,7 @@ func _ready():
 	texture = ImageTexture.create_from_image(image)
 	
 	offset = Vector2(-17, -6)
-	position = Vector2(30, 0)
+	position = Vector2(20, 0)
 	rotation_degrees = 0
 
 func shoot_animation():

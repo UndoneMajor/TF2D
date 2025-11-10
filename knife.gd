@@ -71,6 +71,12 @@ func shoot(from_position: Vector2, direction: Vector2):
 		for result in results:
 			var hit_body = result.collider
 			if hit_body != owner_player and hit_body.has_method("take_damage"):
+				# Check teammates - don't backstab your own team!
+				if "team" in hit_body and "team" in owner_player:
+					if hit_body.team == owner_player.team:
+						print("Knife hit teammate - no damage")
+						continue
+				
 				var is_backstab = check_backstab_with_debug(hit_body)
 				
 				if is_backstab:
