@@ -44,6 +44,11 @@ func _on_body_entered(body):
 	if body == shooter:
 		return
 	
+	# Hit a wall - explode
+	if body is StaticBody2D:
+		explode()
+		return
+	
 	# Check if it's a teammate (TF2 style - rockets pass through teammates)
 	if "team" in body and "team" in shooter:
 		if body.team == shooter.team:
@@ -71,6 +76,11 @@ func explode():
 	for result in results:
 		var body = result.collider
 		if body.has_method("take_damage"):
+			# Check if there's a wall between explosion and target
+			if is_blocked_by_wall(body.global_position):
+				print("Explosion blocked by wall for ", body.name)
+				continue
+			
 			# Calculate damage falloff based on distance
 			var distance = global_position.distance_to(body.global_position)
 			var damage_multiplier = 1.0 - (distance / explosion_radius)
@@ -89,6 +99,18 @@ func explode():
 				print("Explosion hit ", body.name, " for ", int(final_damage), " damage (", int(damage_multiplier * 100), "%)")
 	
 	queue_free()
+
+func is_blocked_by_wall(target_pos: Vector2) -> bool:
+	# Raycast from explosion to target to check for walls
+	var space_state = get_world_2d().direct_space_state
+	var query = PhysicsRayQueryParameters2D.create(global_position, target_pos)
+	query.collision_mask = 1  # Only check walls
+	
+	var result = space_state.intersect_ray(query)
+	if result and result.collider is StaticBody2D:
+		return true  # Wall is blocking
+	
+	return false
 
 func create_explosion_effect():
 	# Create visual explosion effect using a simple Node2D

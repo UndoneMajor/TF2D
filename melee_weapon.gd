@@ -7,6 +7,9 @@ var range = 80  # Melee range
 var can_attack = true
 var owner_player = null
 
+func _ready():
+	pass
+
 func attack(from_position: Vector2, direction: Vector2):
 	if not can_attack:
 		return false

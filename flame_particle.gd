@@ -15,6 +15,9 @@ var damaged_bodies = []  # Track who we've damaged recently
 func _ready():
 	queue_redraw()
 	
+	# Connect to body entered signal to detect walls
+	body_entered.connect(_on_body_entered)
+	
 	# Start bigger
 	scale = Vector2(1.5, 1.5)
 	
@@ -22,6 +25,11 @@ func _ready():
 	var collision = get_node("CollisionShape2D")
 	if collision and collision.shape:
 		collision.shape.radius = 18.0
+
+func _on_body_entered(body):
+	# Hit a wall - destroy flame
+	if body is StaticBody2D:
+		queue_free()
 
 func _draw():
 	# Draw bigger flame particle with visual hitbox
@@ -64,6 +72,10 @@ func check_damage():
 	var overlapping = get_overlapping_bodies()
 	for body in overlapping:
 		if body == shooter:
+			continue
+		
+		# Don't damage walls
+		if body is StaticBody2D:
 			continue
 		
 		# TF2 style - flames pass through teammates

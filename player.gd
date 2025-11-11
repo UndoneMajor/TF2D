@@ -204,10 +204,10 @@ func set_class(class_type):
 	secondary_weapon.owner_player = self
 	melee_weapon.owner_player = self
 	
-	# Position weapons in front of player (in hand)
-	primary_weapon.position = Vector2(35, 0)
-	secondary_weapon.position = Vector2(35, 0)
-	melee_weapon.position = Vector2(35, 0)
+	# Position weapons in front of player (in hand) - closer to player
+	primary_weapon.position = Vector2(20, 0)
+	secondary_weapon.position = Vector2(20, 0)
+	melee_weapon.position = Vector2(20, 0)
 	
 	if utility_weapon:
 		add_child(utility_weapon)
@@ -432,11 +432,26 @@ func _physics_process(delta):
 func switch_weapon(new_weapon):
 	if current_weapon:
 		current_weapon.visible = false
-	5
+	
 	current_weapon = new_weapon
 	
 	if not is_invisible:
 		current_weapon.visible = true
+		# Ensure weapon sprite is fully visible - find any Sprite2D child
+		for child in current_weapon.get_children():
+			if child is Sprite2D:
+				child.modulate.a = 1.0
+				break
+	else:
+		# If cloaked, apply cloak opacity to new weapon - find any Sprite2D child
+		current_weapon.visible = true
+		for child in current_weapon.get_children():
+			if child is Sprite2D:
+				if camera:
+					child.modulate.a = 0.2  # Slightly visible for local player
+				else:
+					child.modulate.a = 0.0  # Invisible for others
+				break
 	
 	print("Switched to: ", current_weapon.weapon_name)
 
@@ -458,8 +473,24 @@ func cloak():
 	can_toggle_cloak = true
 	print("🕵️ CLOAKED! (", int(current_cloak), "% remaining)")
 	
+	# Get the sprite node
+	var sprite = get_node_or_null("AnimatedSprite2D")
+	if sprite:
+		# Make slightly visible for local player (with camera), fully invisible for others
+		if camera:
+			sprite.modulate.a = 0.2  # 20% visible for you
+		else:
+			sprite.modulate.a = 0.0  # 100% invisible for others
+	
+	# Apply same opacity to weapons - find any Sprite2D child
 	if current_weapon:
-		current_weapon.visible = false
+		for child in current_weapon.get_children():
+			if child is Sprite2D:
+				if camera:
+					child.modulate.a = 0.2  # Same as player sprite
+				else:
+					child.modulate.a = 0.0
+				break
 	
 	queue_redraw()
 
@@ -468,8 +499,17 @@ func decloak():
 	can_toggle_cloak = false
 	print("🕵️ UNCLOAKED!")
 	
+	# Restore sprite visibility
+	var sprite = get_node_or_null("AnimatedSprite2D")
+	if sprite:
+		sprite.modulate.a = 1.0  # Fully visible
+	
+	# Restore weapon visibility - find any Sprite2D child
 	if current_weapon:
-		current_weapon.visible = true
+		for child in current_weapon.get_children():
+			if child is Sprite2D:
+				child.modulate.a = 1.0  # Fully visible
+				break
 	
 	if is_disguised:
 		class_color = disguise_color
@@ -485,8 +525,17 @@ func force_decloak():
 	can_toggle_cloak = false
 	print("🕵️ CLOAK DEPLETED!")
 	
+	# Restore sprite visibility
+	var sprite = get_node_or_null("AnimatedSprite2D")
+	if sprite:
+		sprite.modulate.a = 1.0  # Fully visible
+	
+	# Restore weapon visibility - find any Sprite2D child
 	if current_weapon:
-		current_weapon.visible = true
+		for child in current_weapon.get_children():
+			if child is Sprite2D:
+				child.modulate.a = 1.0  # Fully visible
+				break
 	
 	if is_disguised:
 		class_color = disguise_color

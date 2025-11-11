@@ -6,6 +6,10 @@ var player_scene = preload("res://player.tscn")
 var bot_scene = preload("res://bot.tscn")
 var player = null
 
+# Map
+var current_map = null
+var map_script = preload("res://simple_map.gd")
+
 # Team settings - 6v6 (Red vs Blue)
 var max_team_size = 6
 var spawn_radius = 400
@@ -23,6 +27,9 @@ var player_team = 0  # 0 = RED, 1 = BLUE
 var m_key_was_pressed = false
 
 func _ready():
+	# Load the map first!
+	load_map()
+	
 	# Initialize bot ID pools (0-5 for each team)
 	for i in range(max_team_size):
 		red_bot_ids.append(i)
@@ -45,6 +52,15 @@ func _ready():
 	
 	# Show TEAM selection FIRST
 	show_team_selection()
+
+func load_map():
+	# Create map instance
+	current_map = Node2D.new()
+	current_map.set_script(map_script)
+	current_map.name = "Map"
+	add_child(current_map)
+	move_child(current_map, 0)  # Move to back
+	print("✅ Map loaded!")
 
 func _process(delta):
 	# Check for M key when player is dead
@@ -95,11 +111,17 @@ func _on_class_selected(class_type):
 	player = player_scene.instantiate()
 	add_child(player)
 	
-	# Set position based on team
+	# Set position based on team (use map spawn points)
 	if player_team == 0:
-		player.global_position = Vector2(200, 360)
+		if current_map and current_map.has_method("get_red_spawn_position"):
+			player.global_position = current_map.get_red_spawn_position()
+		else:
+			player.global_position = Vector2(200, 360)
 	else:
-		player.global_position = Vector2(1080, 360)
+		if current_map and current_map.has_method("get_blue_spawn_position"):
+			player.global_position = current_map.get_blue_spawn_position()
+		else:
+			player.global_position = Vector2(1080, 360)
 	
 	# Set team FIRST before setting class (so sprite loads correctly)
 	player.team = player_team
@@ -179,12 +201,18 @@ func spawn_bot(team_id):
 	# Set team
 	bot.team = team_id
 	
-	# Spawn position based on team
+	# Spawn position based on team (use map spawn points)
 	var spawn_pos = Vector2.ZERO
 	if team_id == 0:  # RED team spawns on left
-		spawn_pos = Vector2(200, 360) + Vector2(randf_range(-100, 100), randf_range(-200, 200))
+		if current_map and current_map.has_method("get_red_spawn_position"):
+			spawn_pos = current_map.get_red_spawn_position() + Vector2(randf_range(-100, 100), randf_range(-100, 100))
+		else:
+			spawn_pos = Vector2(200, 360) + Vector2(randf_range(-100, 100), randf_range(-200, 200))
 	else:  # BLUE team spawns on right
-		spawn_pos = Vector2(1080, 360) + Vector2(randf_range(-100, 100), randf_range(-200, 200))
+		if current_map and current_map.has_method("get_blue_spawn_position"):
+			spawn_pos = current_map.get_blue_spawn_position() + Vector2(randf_range(-100, 100), randf_range(-100, 100))
+		else:
+			spawn_pos = Vector2(1080, 360) + Vector2(randf_range(-100, 100), randf_range(-200, 200))
 	
 	bot.global_position = spawn_pos
 	

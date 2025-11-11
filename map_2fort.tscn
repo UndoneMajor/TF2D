@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8h5n3m2qax1a"]
+
+[ext_resource type="Script" path="res://map_2fort.gd" id="1"]
+
+[node name="Map2Fort" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Walls" type="StaticBody2D" parent="."]
+
+[node name="TopWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(0, 100)
+
+[node name="BottomWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(0, 800)
+
+[node name="LeftWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(-900, 400)
+
+[node name="RightWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(900, 400)
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="RedSpawn" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-600, 400)
+
+[node name="BlueSpawn" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(600, 400)
+

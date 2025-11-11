@@ -166,16 +166,19 @@ func create_weapons(class_type):
 	if primary_weapon:
 		add_child(primary_weapon)
 		primary_weapon.owner_player = self
+		primary_weapon.position = Vector2(20, 0)  # Position in hand
 		primary_weapon.visible = true
 	
 	if secondary_weapon:
 		add_child(secondary_weapon)
 		secondary_weapon.owner_player = self
+		secondary_weapon.position = Vector2(20, 0)  # Position in hand
 		secondary_weapon.visible = false
 	
 	if melee_weapon:
 		add_child(melee_weapon)
 		melee_weapon.owner_player = self
+		melee_weapon.position = Vector2(20, 0)  # Position in hand
 		melee_weapon.visible = false
 	
 	current_weapon = primary_weapon

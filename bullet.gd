@@ -30,7 +30,15 @@ func _physics_process(delta):
 func check_overlaps():
 	var overlapping = get_overlapping_bodies()
 	for body in overlapping:
-		if body != shooter and body.has_method("take_damage"):
+		if body == shooter:
+			continue
+		
+		# Hit a wall - destroy bullet
+		if body is StaticBody2D:
+			queue_free()
+			return
+		
+		if body.has_method("take_damage"):
 			# TF2 style - bullets pass through teammates
 			if "team" in body and "team" in shooter:
 				if body.team == shooter.team:
@@ -51,6 +59,11 @@ func _on_body_entered(body):
 		return
 	
 	if body == shooter:
+		return
+	
+	# Hit a wall - destroy bullet
+	if body is StaticBody2D:
+		queue_free()
 		return
 	
 	# TF2 style - bullets pass through teammates

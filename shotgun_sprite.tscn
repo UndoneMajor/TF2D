@@ -2,5 +2,5 @@
 
 [ext_resource type="Script" uid="uid://bfbpriwhn0rqk" path="res://shotgun_sprite.gd" id="1_7v58l"]
 
-[node name="ShotgunSprite" type="Sprite2D"]
+[node name="ShotgunSprite" type="Node2D"]
 script = ExtResource("1_7v58l")
