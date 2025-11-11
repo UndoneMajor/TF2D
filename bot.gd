@@ -43,12 +43,18 @@ var decision_interval = 0.5
 var shoot_timer = 0.0
 var shoot_delay = 0.0
 
+# Navigation
+var nav_agent: NavigationAgent2D = null
+
 # Bot skill (makes them play like real players)
 var aim_accuracy = 0.7  # How accurate they aim (0-1)
 var reaction_time = 0.3  # How fast they react
 var fire_rate_modifier = 1.5  # How often they shoot (higher = slower)
 
 func _ready():
+	# Get NavigationAgent2D
+	nav_agent = get_node_or_null("NavigationAgent2D")
+	
 	# Random class using Time for better randomization
 	var random_seed = Time.get_ticks_usec() + randi()
 	seed(random_seed)
@@ -324,6 +330,10 @@ func make_decision():
 
 func ai_patrol(delta):
 	var direction = (patrol_point - global_position).normalized()
+	
+	# Check for walls and steer around them
+	direction = avoid_walls(direction)
+	
 	velocity = direction * speed * 0.5
 	
 	if direction.length() > 0:
@@ -338,6 +348,10 @@ func ai_chase(delta):
 		return
 	
 	var direction = (target.global_position - global_position).normalized()
+	
+	# Check for walls and steer around them
+	direction = avoid_walls(direction)
+	
 	velocity = direction * speed
 	look_at(target.global_position)
 
@@ -428,6 +442,45 @@ func take_damage(amount):
 	
 	if health <= 0:
 		die()
+
+func avoid_walls(desired_direction: Vector2) -> Vector2:
+	# Cast multiple rays to detect walls and steer around them
+	var space_state = get_world_2d().direct_space_state
+	var ray_distance = 80.0  # Look ahead distance
+	var avoidance_force = Vector2.ZERO
+	
+	# Cast rays in multiple directions
+	var ray_angles = [-45, -22, 0, 22, 45]  # Degrees relative to desired direction
+	
+	for angle_deg in ray_angles:
+		var angle_rad = deg_to_rad(angle_deg)
+		var ray_dir = desired_direction.rotated(angle_rad)
+		var ray_end = global_position + ray_dir * ray_distance
+		
+		var query = PhysicsRayQueryParameters2D.create(global_position, ray_end)
+		query.exclude = [self]
+		query.collision_mask = 1  # Only check walls
+		
+		var result = space_state.intersect_ray(query)
+		
+		if result and result.collider is StaticBody2D:
+			# Hit a wall! Steer away from it
+			var hit_distance = global_position.distance_to(result.position)
+			var avoidance_strength = 1.0 - (hit_distance / ray_distance)
+			
+			# Steer perpendicular to the wall normal
+			var wall_normal = result.normal
+			var steer_direction = Vector2(-wall_normal.y, wall_normal.x)
+			
+			# If center ray hits, steer strongly
+			if angle_deg == 0:
+				avoidance_strength *= 2.0
+			
+			avoidance_force += steer_direction * avoidance_strength
+	
+	# Combine desired direction with avoidance
+	var final_direction = (desired_direction + avoidance_force).normalized()
+	return final_direction
 
 func die():
 	print("Bot died!")

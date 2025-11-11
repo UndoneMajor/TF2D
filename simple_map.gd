@@ -4,6 +4,7 @@ extends Node2D
 
 func _ready():
 	create_map()
+	create_navigation()
 
 func create_map():
 	# Create floor
@@ -61,6 +62,34 @@ func create_wall(pos: Vector2, size: Vector2, color: Color):
 	wall.add_child(outline)
 	
 	add_child(wall)
+
+func create_navigation():
+	# Create navigation region for pathfinding
+	var nav_region = NavigationRegion2D.new()
+	nav_region.name = "NavigationRegion2D"
+	add_child(nav_region)
+	
+	# Create navigation polygon (walkable area)
+	var nav_poly = NavigationPolygon.new()
+	
+	# Define the entire walkable area as one big rectangle
+	var walkable_area = PackedVector2Array([
+		Vector2(-950, -550),   # Top-left
+		Vector2(950, -550),    # Top-right
+		Vector2(950, 550),     # Bottom-right
+		Vector2(-950, 550)     # Bottom-left
+	])
+	nav_poly.add_outline(walkable_area)
+	
+	# Make the navigation mesh
+	nav_poly.make_polygons_from_outlines()
+	nav_region.navigation_polygon = nav_poly
+	
+	print("✅ Navigation mesh created!")
+	
+	# Wait a frame then enable navigation
+	await get_tree().process_frame
+	nav_region.enabled = true
 
 func get_red_spawn_position() -> Vector2:
 	return Vector2(-800, 0)
